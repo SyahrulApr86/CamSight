@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: camsight-backend
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - camsight-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: camsight-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_HOST=backend
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - camsight-network
+
+networks:
+  camsight-network:
+    driver: bridge
