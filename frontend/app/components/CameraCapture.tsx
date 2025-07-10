@@ -96,8 +96,18 @@ export default function CameraCapture({
 
       if (!videoRef.current) {
         console.error("Video reference is null");
-        throw new Error("Video element not found");
+        console.log("Attempting to wait for video element...");
+        
+        // Wait a bit for the video element to be available
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        if (!videoRef.current) {
+          console.error("Video element still not available after waiting");
+          throw new Error("Video element not found");
+        }
       }
+      
+      console.log("Video element found:", videoRef.current);
 
       console.log("Setting video source...");
       videoRef.current.srcObject = stream;
@@ -292,16 +302,20 @@ export default function CameraCapture({
 
       {/* Video Preview */}
       <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden">
-        {cameraStatus === "granted" ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
+        {/* Video element - always rendered but hidden when not granted */}
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className={`w-full h-full object-cover ${
+            cameraStatus === "granted" ? "block" : "hidden"
+          }`}
+        />
+
+        {/* Overlay for non-granted states */}
+        {cameraStatus !== "granted" && (
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
             <div className="text-center">
               {cameraStatus === "requesting" ? (
                 <>
