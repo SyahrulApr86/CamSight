@@ -1,6 +1,6 @@
 # CamSight Backend
 
-Backend FastAPI untuk sistem object tracking real-time menggunakan YOLO 12 nano.
+FastAPI backend for real-time object tracking system using YOLO 12 nano.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-Atau:
+Or:
 
 ```bash
 python main.py
@@ -26,28 +26,28 @@ python main.py
 
 ### WebSocket
 
-- **`/ws`** - WebSocket endpoint untuk menerima frame dari frontend
+- **`/ws`** - WebSocket endpoint to receive frames from frontend
 
 ### HTTP
 
 - **`/`** - Health check
-- **`/status`** - Status sistem dan model
-- **`/video_feed`** - MJPEG stream hasil deteksi objek
+- **`/status`** - System and model status
+- **`/video_feed`** - MJPEG stream of object detection results
 
 ## Model
 
-Backend menggunakan model YOLO 12 nano (`yolo12n.pt`) untuk object detection. Model akan didownload otomatis saat pertama kali dijalankan.
+Backend uses YOLO 12 nano model (`yolo12n.pt`) for object detection. The model will be downloaded automatically on first run.
 
-Jika YOLO 12 nano tidak tersedia, akan menggunakan YOLOv8n sebagai fallback.
+If YOLO 12 nano is not available, it will use YOLOv8n as fallback.
 
 ## Technical Details
 
 - **Framework**: FastAPI
-- **WebSocket**: Untuk real-time communication
+- **WebSocket**: For real-time communication
 - **Object Detection**: Ultralytics YOLO
 - **Image Processing**: OpenCV
-- **MJPEG Streaming**: Untuk mengirim hasil ke frontend
+- **MJPEG Streaming**: To send results to frontend
 
 ## CORS
 
-Backend dikonfigurasi untuk menerima request dari semua origin untuk keperluan development.
+Backend is configured to accept requests from all origins for development purposes.

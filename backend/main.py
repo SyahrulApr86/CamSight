@@ -13,7 +13,7 @@ import time
 
 app = FastAPI(title="CamSight Backend", version="1.0.0")
 
-# CORS middleware untuk mengizinkan frontend mengakses backend
+# CORS middleware to allow frontend access to backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -27,25 +27,25 @@ latest_frame = None
 frame_lock = threading.Lock()
 model = None
 
-# Load YOLO model saat startup
+# Load YOLO model on startup
 @app.on_event("startup")
 async def startup_event():
     global model
     try:
-        # Download dan load model YOLO 12 nano
+        # Download and load YOLO 12 nano model
         model = YOLO("yolo12n.pt")
-        print("Model YOLO 12 nano berhasil dimuat")
+        print("YOLO 12 nano model loaded successfully")
     except Exception as e:
         print(f"Error loading YOLO model: {e}")
-        # Fallback ke YOLOv8n jika YOLO12n tidak tersedia
+        # Fallback to YOLOv8n if YOLO12n is not available
         try:
             model = YOLO("yolov8n.pt")
-            print("Fallback: Model YOLOv8n berhasil dimuat")
+            print("Fallback: YOLOv8n model loaded successfully")
         except Exception as e2:
             print(f"Error loading fallback model: {e2}")
 
 def process_frame(frame_data):
-    """Proses frame dengan YOLO dan return annotated frame"""
+    """Process frame with YOLO and return annotated frame"""
     global model, latest_frame
     
     try:
@@ -57,19 +57,19 @@ def process_frame(frame_data):
         if frame is None:
             return
         
-        # Jalankan deteksi YOLO
+        # Run YOLO detection
         if model is not None:
             results = model(frame, verbose=False)
             
-            # Annotate frame dengan bounding boxes
+            # Annotate frame with bounding boxes
             annotated_frame = results[0].plot()
         else:
             annotated_frame = frame
-            # Jika model tidak tersedia, tampilkan pesan
-            cv2.putText(annotated_frame, "Model tidak tersedia", (50, 50), 
+            # If model is not available, show message
+            cv2.putText(annotated_frame, "Model not available", (50, 50), 
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         
-        # Simpan frame terbaru
+        # Save latest frame
         with frame_lock:
             latest_frame = annotated_frame.copy()
             
@@ -78,16 +78,16 @@ def process_frame(frame_data):
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    """WebSocket endpoint untuk menerima frame dari frontend"""
+    """WebSocket endpoint to receive frames from frontend"""
     await websocket.accept()
     print("WebSocket connection established")
     
     try:
         while True:
-            # Terima frame dari frontend
+            # Receive frame from frontend
             data = await websocket.receive_text()
             
-            # Process frame di background thread
+            # Process frame in background thread
             thread = threading.Thread(target=process_frame, args=(data,))
             thread.daemon = True
             thread.start()
@@ -98,13 +98,13 @@ async def websocket_endpoint(websocket: WebSocket):
         print(f"WebSocket error: {e}")
 
 def generate_frames():
-    """Generator untuk MJPEG stream"""
+    """Generator for MJPEG stream"""
     global latest_frame
     
     while True:
         with frame_lock:
             if latest_frame is not None:
-                # Encode frame ke JPEG
+                # Encode frame to JPEG
                 ret, buffer = cv2.imencode('.jpg', latest_frame, 
                                          [cv2.IMWRITE_JPEG_QUALITY, 80])
                 if ret:
@@ -116,7 +116,7 @@ def generate_frames():
 
 @app.get("/video_feed")
 async def video_feed():
-    """Endpoint untuk MJPEG stream hasil deteksi objek"""
+    """Endpoint for MJPEG stream of object detection results"""
     return StreamingResponse(
         generate_frames(),
         media_type="multipart/x-mixed-replace; boundary=frame"

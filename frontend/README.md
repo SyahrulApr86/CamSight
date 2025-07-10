@@ -1,6 +1,6 @@
 # CamSight Frontend
 
-Frontend Next.js untuk sistem object tracking real-time CamSight.
+Next.js frontend for CamSight real-time object tracking system.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Aplikasi akan berjalan di: http://localhost:3000
+Application will run at: http://localhost:3000
 
 ## Tech Stack
 
@@ -31,86 +31,86 @@ Aplikasi akan berjalan di: http://localhost:3000
 
 ### Real-time Camera Capture
 
-- Akses kamera menggunakan `getUserMedia`
-- Pilihan multiple kamera devices
-- Preview real-time dengan kontrol start/stop
-- Frame capture dengan interval configurable
+- Camera access using `getUserMedia`
+- Multiple camera device selection
+- Real-time preview with start/stop controls
+- Frame capture with configurable interval
 
 ### WebSocket Integration
 
-- Koneksi real-time ke backend
-- Auto-reconnect pada disconnect
-- Status indicator untuk connection state
-- Frame streaming dengan base64 encoding
+- Real-time connection to backend
+- Auto-reconnect on disconnect
+- Status indicator for connection state
+- Frame streaming with base64 encoding
 
 ### Object Detection Display
 
-- MJPEG stream dari backend untuk hasil deteksi
-- Auto-retry mechanism pada error
-- Loading states dan error handling
+- MJPEG stream from backend for detection results
+- Auto-retry mechanism on error
+- Loading states and error handling
 - Real-time status indicators
 
 ### Modern UI/UX
 
 - Glass morphism design
 - Responsive layout (mobile & desktop)
-- Tailwind CSS untuk styling
-- Smooth animations dan transitions
-- Status indicators dengan animasi
+- Tailwind CSS for styling
+- Smooth animations and transitions
+- Status indicators with animations
 
 ## API Integration
 
-Frontend berkomunikasi dengan backend melalui:
+Frontend communicates with backend through:
 
 1. **WebSocket** (`ws://localhost:8000/ws`)
 
-   - Mengirim frame kamera ke backend
+   - Send camera frames to backend
    - Real-time bidirectional communication
 
 2. **HTTP** (`http://localhost:8000/video_feed`)
 
-   - MJPEG stream untuk hasil deteksi objek
-   - Auto-refresh untuk real-time display
+   - MJPEG stream for object detection results
+   - Auto-refresh for real-time display
 
 3. **Health Check** (`http://localhost:8000/status`)
-   - Monitoring status backend
-   - Auto-polling setiap 5 detik
+   - Monitor backend status
+   - Auto-polling every 5 seconds
 
 ## Components
 
 ### `CameraCapture`
 
-- Akses dan kontrol kamera
-- Frame capture dan WebSocket transmission
-- Device selection dan permission handling
+- Camera access and control
+- Frame capture and WebSocket transmission
+- Device selection and permission handling
 
 ### `ObjectTracker`
 
-- Display hasil deteksi dari backend
-- MJPEG stream handling dengan error recovery
-- Status dan info display
+- Display detection results from backend
+- MJPEG stream handling with error recovery
+- Status and info display
 
 ### `StatusIndicator`
 
-- Monitoring koneksi backend, WebSocket, dan streaming
-- Visual indicators dengan animasi
-- Warning dan tips untuk user
+- Monitor backend, WebSocket, and streaming connections
+- Visual indicators with animations
+- Warnings and tips for users
 
 ## Styling
 
-Menggunakan Tailwind CSS dengan:
+Uses Tailwind CSS with:
 
 - Custom color palette (primary, dark themes)
 - Glass morphism effects
 - Custom animations (pulse, float, glow)
 - Responsive design utilities
-- Component classes untuk reusability
+- Component classes for reusability
 
 ## State Management
 
-Menggunakan React hooks untuk:
+Uses React hooks for:
 
-- Camera access dan control
+- Camera access and control
 - WebSocket connection state
 - Streaming status
 - Backend health monitoring
@@ -120,7 +120,7 @@ Menggunakan React hooks untuk:
 
 Minimum requirements:
 
-- Modern browsers dengan WebRTC support
+- Modern browsers with WebRTC support
 - Camera/microphone permissions
 - WebSocket support
 - Canvas API support

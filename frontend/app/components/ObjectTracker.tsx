@@ -84,7 +84,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
                     <div></div>
                     <div></div>
                   </div>
-                  <p className="text-gray-600">Memuat hasil deteksi...</p>
+                  <p className="text-gray-600">Loading detection results...</p>
                 </div>
               </div>
             )}
@@ -107,15 +107,15 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
                     />
                   </svg>
                   <p className="text-red-600 font-medium mb-2">
-                    Gagal memuat stream
+                    Failed to load stream
                   </p>
                   <p className="text-gray-600 text-sm mb-4">
                     {retryCount < 3
-                      ? `Mencoba ulang... (${retryCount + 1}/3)`
-                      : "Maks retry tercapai"}
+                      ? `Retrying... (${retryCount + 1}/3)`
+                      : "Max retry attempts reached"}
                   </p>
                   <button onClick={handleRetry} className="btn-primary text-sm">
-                    Coba Lagi
+                    Try Again
                   </button>
                 </div>
               </div>
@@ -153,10 +153,10 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
                 />
               </svg>
               <p className="text-gray-600 mb-2">
-                Hasil deteksi objek akan muncul di sini
+                Object detection results will appear here
               </p>
               <p className="text-gray-500 text-sm">
-                Mulai streaming untuk melihat deteksi real-time
+                Start streaming to see real-time detection
               </p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
               <span className="font-medium text-green-800">Status</span>
             </div>
             <p className="text-green-700 text-sm">
-              {imageLoaded ? "Aktif" : imageError ? "Error" : "Loading..."}
+              {imageLoaded ? "Active" : imageError ? "Error" : "Loading..."}
             </p>
           </div>
 
@@ -212,16 +212,12 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
               />
             </svg>
             <div>
-              <h3 className="font-medium text-blue-800 mb-1">
-                Cara Menggunakan:
-              </h3>
+              <h3 className="font-medium text-blue-800 mb-1">How to Use:</h3>
               <ul className="text-blue-700 text-sm space-y-1">
-                <li>• Pastikan backend sudah berjalan</li>
-                <li>• Klik "Mulai Streaming" di panel kamera</li>
-                <li>• Hasil deteksi objek akan muncul secara real-time</li>
-                <li>
-                  • Objek yang terdeteksi akan diberi kotak batas (bounding box)
-                </li>
+                <li>• Ensure backend is running</li>
+                <li>• Click "Start Streaming" on camera panel</li>
+                <li>• Object detection results will appear in real-time</li>
+                <li>• Detected objects will be marked with bounding boxes</li>
               </ul>
             </div>
           </div>

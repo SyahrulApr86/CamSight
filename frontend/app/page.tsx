@@ -45,13 +45,13 @@ export default function Home() {
 
       wsRef.current.onopen = () => {
         setIsConnected(true);
-        console.log("🔗 WebSocket connected");
+        console.log("WebSocket connected");
       };
 
       wsRef.current.onclose = () => {
         setIsConnected(false);
         setIsStreaming(false);
-        console.log("📡 WebSocket disconnected");
+        console.log("WebSocket disconnected");
       };
 
       wsRef.current.onerror = (error) => {
@@ -110,8 +110,8 @@ export default function Home() {
           </h1>
         </div>
         <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-          Sistem real-time object tracking menggunakan YOLO 12 nano untuk
-          deteksi objek secara langsung dari kamera Anda.
+          Real-time object tracking system using YOLO 12 nano for live object
+          detection from your camera.
         </p>
       </header>
 
@@ -151,7 +151,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  Input Kamera
+                  Camera Input
                 </h2>
               </div>
 
@@ -185,7 +185,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  Hasil Deteksi
+                  Detection Results
                 </h2>
               </div>
 
@@ -216,8 +216,8 @@ export default function Home() {
               <h3 className="text-lg font-semibold">Real-time</h3>
             </div>
             <p className="text-gray-600">
-              Deteksi objek secara langsung dengan latency rendah menggunakan
-              WebSocket.
+              Live object detection with low latency using WebSocket
+              communication.
             </p>
           </div>
 
@@ -241,7 +241,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold">YOLO 12 Nano</h3>
             </div>
             <p className="text-gray-600">
-              Menggunakan model YOLO terbaru untuk akurasi deteksi yang tinggi.
+              Using the latest YOLO model for high accuracy object detection.
             </p>
           </div>
 
@@ -265,7 +265,7 @@ export default function Home() {
               <h3 className="text-lg font-semibold">User-Friendly</h3>
             </div>
             <p className="text-gray-600">
-              Interface yang mudah digunakan dengan desain modern dan responsif.
+              Easy-to-use interface with modern and responsive design.
             </p>
           </div>
         </div>

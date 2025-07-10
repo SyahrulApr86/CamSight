@@ -78,7 +78,7 @@ export default function StatusIndicator({
                 isConnected ? "text-blue-600" : "text-gray-600"
               }`}
             >
-              {isConnected ? "WebSocket Terhubung" : "WebSocket Terputus"}
+              {isConnected ? "WebSocket Connected" : "WebSocket Disconnected"}
             </span>
           </div>
 
@@ -94,7 +94,7 @@ export default function StatusIndicator({
                 isStreaming ? "text-purple-600" : "text-gray-600"
               }`}
             >
-              {isStreaming ? "Streaming Aktif" : "Streaming Tidak Aktif"}
+              {isStreaming ? "Streaming Active" : "Streaming Inactive"}
             </span>
           </div>
         </div>
@@ -117,8 +117,8 @@ export default function StatusIndicator({
                 />
               </svg>
               <span className="text-red-700 text-sm font-medium">
-                Backend tidak dapat dijangkau. Pastikan server backend berjalan
-                di http://localhost:8000
+                Backend cannot be reached. Ensure backend server is running at
+                http://localhost:8000
               </span>
             </div>
           </div>
@@ -142,8 +142,8 @@ export default function StatusIndicator({
                 />
               </svg>
               <span className="text-blue-700 text-sm font-medium">
-                Klik "Mulai Streaming" untuk memulai deteksi objek real-time
-                dari kamera Anda.
+                Click "Start Streaming" to begin real-time object detection from
+                your camera.
               </span>
             </div>
           </div>

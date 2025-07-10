@@ -166,7 +166,7 @@ export default function CameraCapture({
       {devices.length > 1 && cameraStatus === "idle" && (
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Pilih Kamera:
+            Select Camera:
           </label>
           <select
             value={selectedDevice}
@@ -175,7 +175,7 @@ export default function CameraCapture({
           >
             {devices.map((device) => (
               <option key={device.deviceId} value={device.deviceId}>
-                {device.label || `Kamera ${device.deviceId.slice(0, 8)}`}
+                {device.label || `Camera ${device.deviceId.slice(0, 8)}`}
               </option>
             ))}
           </select>
@@ -203,7 +203,7 @@ export default function CameraCapture({
                     <div></div>
                     <div></div>
                   </div>
-                  <p className="text-gray-600">Mengakses kamera...</p>
+                  <p className="text-gray-600">Accessing camera...</p>
                 </>
               ) : cameraStatus === "denied" ? (
                 <>
@@ -221,10 +221,10 @@ export default function CameraCapture({
                     />
                   </svg>
                   <p className="text-red-600 font-medium mb-2">
-                    Akses kamera ditolak
+                    Camera access denied
                   </p>
                   <p className="text-gray-600 text-sm">
-                    Berikan izin akses kamera untuk melanjutkan
+                    Please grant camera permission to continue
                   </p>
                 </>
               ) : (
@@ -242,9 +242,7 @@ export default function CameraCapture({
                       d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
                     />
                   </svg>
-                  <p className="text-gray-600">
-                    Klik tombol untuk mengakses kamera
-                  </p>
+                  <p className="text-gray-600">Click button to access camera</p>
                 </>
               )}
             </div>
@@ -296,8 +294,8 @@ export default function CameraCapture({
               />
             </svg>
             {cameraStatus === "granted"
-              ? "Mulai Streaming"
-              : "Akses Kamera & Mulai"}
+              ? "Start Streaming"
+              : "Access Camera & Start"}
           </button>
         ) : (
           <button
@@ -349,8 +347,7 @@ export default function CameraCapture({
       {/* Status Messages */}
       {!isBackendOnline && (
         <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-          Backend tidak online. Pastikan server backend berjalan terlebih
-          dahulu.
+          Backend is not online. Please ensure backend server is running first.
         </div>
       )}
     </div>
