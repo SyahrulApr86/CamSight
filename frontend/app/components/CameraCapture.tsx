@@ -57,7 +57,61 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
     getDevices();
   }, [selectedDeviceId, isClient]);
 
-  // Start camera access
+  // Capture frame from video with performance monitoring
+  const captureFrame = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const startTime = performance.now();
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx || video.videoWidth === 0 || video.videoHeight === 0) return;
+
+    // Set canvas dimensions to match video (only if changed)
+    if (
+      canvas.width !== video.videoWidth ||
+      canvas.height !== video.videoHeight
+    ) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+    }
+
+    // Draw video frame to canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert to base64 with optimized settings for speed
+    const frameData = canvas.toDataURL("image/jpeg", 0.5); // Further reduced quality for maximum speed
+
+    const processingTime = performance.now() - startTime;
+    if (processingTime > 20) {
+      // Log if frame processing takes > 20ms
+      console.warn(`Frame processing took ${processingTime.toFixed(1)}ms`);
+    }
+
+    // Send frame to backend
+    onFrame(frameData);
+  }, [onFrame]);
+
+  // Start frame capture with higher FPS
+  useEffect(() => {
+    if (isStreaming && cameraStatus === "granted") {
+      // Increased to 25 FPS for maximum responsiveness
+      intervalRef.current = setInterval(captureFrame, 40); // 25 FPS
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isStreaming, cameraStatus, captureFrame]);
+
+  // Optimized camera constraints for better performance
   const startCamera = async () => {
     setCameraStatus("requesting");
     setError("");
@@ -73,20 +127,20 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
       const constraints: MediaStreamConstraints = {
         video: {
           deviceId: selectedDeviceId || undefined,
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          frameRate: { ideal: 30 },
+          width: { ideal: 480, max: 640 }, // Lower resolution for faster processing
+          height: { ideal: 360, max: 480 },
+          frameRate: { ideal: 30, min: 20 }, // Consistent high frame rate
         },
       };
 
       console.log("Requesting camera access with constraints:", constraints);
 
-      // Set a timeout for the entire operation
+      // Reduced timeout for faster feedback
       timeoutId = setTimeout(() => {
         console.error("Camera access operation timed out");
         setCameraStatus("timeout");
         setError("Camera access timed out. Please try again.");
-      }, 15000); // 15 second timeout
+      }, 10000); // Reduced to 10 seconds
 
       console.log("Calling getUserMedia...");
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -105,8 +159,8 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
         console.error("Video reference is null");
         console.log("Attempting to wait for video element...");
 
-        // Wait a bit for the video element to be available
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        // Reduced wait time for faster startup
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
         if (!videoRef.current) {
           console.error("Video element still not available after waiting");
@@ -119,7 +173,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
       console.log("Setting video source...");
       videoRef.current.srcObject = stream;
 
-      // Wait for video to be ready
+      // Wait for video to be ready with optimized timeout
       console.log("Waiting for video to load...");
       await new Promise<void>((resolve, reject) => {
         const video = videoRef.current!;
@@ -145,6 +199,13 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
         if (video.readyState >= 1) {
           onLoadedMetadata();
         }
+
+        // Add timeout for metadata loading
+        setTimeout(() => {
+          if (video.readyState < 1) {
+            reject(new Error("Video metadata loading timeout"));
+          }
+        }, 3000);
       });
 
       console.log("Playing video...");
@@ -205,47 +266,6 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
 
     setCameraStatus("idle");
   };
-
-  // Capture frame from video
-  const captureFrame = () => {
-    if (!videoRef.current || !canvasRef.current) return;
-
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx || video.videoWidth === 0 || video.videoHeight === 0) return;
-
-    // Set canvas dimensions to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // Draw video frame to canvas
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Convert to base64
-    const frameData = canvas.toDataURL("image/jpeg", 0.8);
-
-    // Send frame to backend
-    onFrame(frameData);
-  };
-
-  // Start frame capture
-  useEffect(() => {
-    if (isStreaming && cameraStatus === "granted") {
-      intervalRef.current = setInterval(captureFrame, 100); // 10 FPS
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [isStreaming, cameraStatus, onFrame]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -332,25 +352,8 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
           <div className="w-3 h-3 rounded-full bg-gray-400"></div>
           <span className="text-sm font-medium text-gray-700">Loading...</span>
         </div>
-        <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
-          <div className="w-full h-64 md:h-80 bg-gray-800 flex items-center justify-center">
-            <div className="text-white text-center">
-              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-gray-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <p className="text-lg font-medium">Loading Camera Interface...</p>
-            </div>
-          </div>
+        <div className="relative bg-gray-200 rounded-2xl overflow-hidden h-64 md:h-80 animate-pulse">
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200"></div>
         </div>
       </div>
     );
