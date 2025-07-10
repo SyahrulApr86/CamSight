@@ -69,7 +69,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
               alt="Object Detection Results"
               onLoad={handleImageLoad}
               onError={handleImageError}
-              className={`w-full h-full object-contain transition-opacity duration-300 ${
+              className={`w-full h-full object-cover transition-opacity duration-300 ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
             />

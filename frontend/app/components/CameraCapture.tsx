@@ -338,7 +338,7 @@ export default function CameraCapture({
           autoPlay
           playsInline
           muted
-          className={`w-full h-full object-contain ${
+          className={`w-full h-full object-cover ${
             cameraStatus === "granted" ? "block" : "hidden"
           }`}
         />
