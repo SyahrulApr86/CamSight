@@ -28,6 +28,7 @@ export default function CameraCapture({
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string>("");
   const [frameCount, setFrameCount] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Get available camera devices
   useEffect(() => {
@@ -52,8 +53,14 @@ export default function CameraCapture({
   // Start camera access
   const startCamera = async () => {
     setCameraStatus("requesting");
+    setErrorMessage("");
 
     try {
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("getUserMedia is not supported in this browser");
+      }
+
       const constraints: MediaStreamConstraints = {
         video: {
           deviceId: selectedDevice || undefined,
@@ -63,18 +70,54 @@ export default function CameraCapture({
         },
       };
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log("Requesting camera access with constraints:", constraints);
+
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Camera access timeout")), 10000)
+      );
+
+      const streamPromise = navigator.mediaDevices.getUserMedia(constraints);
+      const stream = (await Promise.race([
+        streamPromise,
+        timeoutPromise,
+      ])) as MediaStream;
+
       streamRef.current = stream;
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        await videoRef.current.play();
         setCameraStatus("granted");
+        console.log("Camera access granted successfully");
+        return true;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error accessing camera:", error);
       setCameraStatus("denied");
+
+      // Set specific error messages
+      if (error.name === "NotAllowedError") {
+        setErrorMessage(
+          "Camera permission denied. Please allow camera access and try again."
+        );
+      } else if (error.name === "NotFoundError") {
+        setErrorMessage(
+          "No camera found. Please connect a camera and try again."
+        );
+      } else if (error.name === "NotReadableError") {
+        setErrorMessage("Camera is already in use by another application.");
+      } else if (error.message === "Camera access timeout") {
+        setErrorMessage("Camera access timed out. Please try again.");
+      } else {
+        setErrorMessage(
+          `Camera error: ${error.message || "Unknown error occurred"}`
+        );
+      }
+
+      throw error;
     }
+    return false;
   };
 
   // Stop camera
@@ -144,13 +187,19 @@ export default function CameraCapture({
     };
   }, []);
 
-  const handleStartStreaming = () => {
+  const handleStartStreaming = async () => {
     if (cameraStatus === "granted") {
       onStartStreaming();
     } else {
-      startCamera().then(() => {
-        onStartStreaming();
-      });
+      try {
+        const success = await startCamera();
+        if (success) {
+          onStartStreaming();
+        }
+      } catch (error) {
+        console.error("Failed to start camera:", error);
+        // Status sudah di-set ke "denied" di startCamera()
+      }
     }
   };
 
@@ -344,7 +393,39 @@ export default function CameraCapture({
         )}
       </div>
 
-      {/* Status Messages */}
+      {/* Error message */}
+      {errorMessage && cameraStatus === "denied" && (
+        <div className="text-center text-sm text-red-600 bg-red-50 border border-red-200 p-3 rounded-lg">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <svg
+              className="w-4 h-4 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+            <span className="font-medium">Camera Error</span>
+          </div>
+          <p>{errorMessage}</p>
+          <button
+            onClick={() => {
+              setErrorMessage("");
+              setCameraStatus("idle");
+            }}
+            className="mt-2 text-xs text-red-700 underline hover:text-red-800"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* Backend offline message */}
       {!isBackendOnline && (
         <div className="text-center text-sm text-red-600 bg-red-50 p-3 rounded-lg">
           Backend is not online. Please ensure backend server is running first.
