@@ -331,21 +331,21 @@ export default function CameraCapture({
       )}
 
       {/* Video Preview */}
-      <div className="relative h-80 md:h-96 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative w-full bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
         {/* Video element - always rendered but hidden when not granted */}
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className={`w-full h-full object-contain ${
+          className={`max-w-full max-h-[500px] ${
             cameraStatus === "granted" ? "block" : "hidden"
           }`}
         />
 
         {/* Overlay for non-granted states */}
         {cameraStatus !== "granted" && (
-          <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
+          <div className="w-full h-64 flex items-center justify-center bg-gray-100">
             <div className="text-center">
               {cameraStatus === "requesting" ? (
                 <>

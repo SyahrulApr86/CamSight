@@ -60,7 +60,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
   return (
     <div className="space-y-4">
       {/* Detection Results Display */}
-      <div className="relative h-80 md:h-96 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative w-full bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
         {isStreaming ? (
           <>
             <img
@@ -69,14 +69,14 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
               alt="Object Detection Results"
               onLoad={handleImageLoad}
               onError={handleImageError}
-              className={`w-full h-full object-contain transition-opacity duration-300 ${
+              className={`max-w-full max-h-[500px] transition-opacity duration-300 ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
             />
 
             {/* Loading overlay */}
             {!imageLoaded && !imageError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <div className="absolute inset-0 w-full h-64 flex items-center justify-center bg-gray-100">
                 <div className="text-center">
                   <div className="loading-dots mx-auto mb-4">
                     <div></div>
@@ -91,7 +91,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
 
             {/* Error overlay */}
             {imageError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <div className="absolute inset-0 w-full h-64 flex items-center justify-center bg-gray-100">
                 <div className="text-center">
                   <svg
                     className="w-16 h-16 text-red-500 mx-auto mb-4"
@@ -137,7 +137,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
             )}
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-64 flex items-center justify-center">
             <div className="text-center">
               <svg
                 className="w-16 h-16 text-gray-400 mx-auto mb-4"
