@@ -34,15 +34,15 @@ async def startup_event():
     try:
         # Download dan load model YOLO 12 nano
         model = YOLO("yolo12n.pt")
-        print("✅ Model YOLO 12 nano berhasil dimuat")
+        print("Model YOLO 12 nano berhasil dimuat")
     except Exception as e:
-        print(f"❌ Error loading YOLO model: {e}")
+        print(f"Error loading YOLO model: {e}")
         # Fallback ke YOLOv8n jika YOLO12n tidak tersedia
         try:
             model = YOLO("yolov8n.pt")
-            print("✅ Fallback: Model YOLOv8n berhasil dimuat")
+            print("Fallback: Model YOLOv8n berhasil dimuat")
         except Exception as e2:
-            print(f"❌ Error loading fallback model: {e2}")
+            print(f"Error loading fallback model: {e2}")
 
 def process_frame(frame_data):
     """Proses frame dengan YOLO dan return annotated frame"""
@@ -80,7 +80,7 @@ def process_frame(frame_data):
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint untuk menerima frame dari frontend"""
     await websocket.accept()
-    print("🔗 WebSocket connection established")
+    print("WebSocket connection established")
     
     try:
         while True:
@@ -93,7 +93,7 @@ async def websocket_endpoint(websocket: WebSocket):
             thread.start()
             
     except WebSocketDisconnect:
-        print("📡 WebSocket disconnected")
+        print("WebSocket disconnected")
     except Exception as e:
         print(f"WebSocket error: {e}")
 

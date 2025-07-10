@@ -1,13 +1,8 @@
-# 🎯 CamSight - Real-time Object Tracking System
+# CamSight - Real-time Object Tracking System
 
 **CamSight** adalah sistem web real-time object tracking yang menggunakan YOLO 12 nano untuk mendeteksi objek secara langsung dari kamera user. Sistem ini terdiri dari backend FastAPI dan frontend Next.js dengan UI modern.
 
-![CamSight Demo](https://img.shields.io/badge/Status-Ready%20to%20Use-brightgreen)
-![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)
-![Frontend](https://img.shields.io/badge/Frontend-Next.js%2014-black)
-![Model](https://img.shields.io/badge/AI%20Model-YOLO%2012%20Nano-blue)
-
-## 🚀 Fitur Utama
+## Fitur Utama
 
 - **Real-time Object Detection**: Deteksi objek secara langsung menggunakan YOLO 12 nano
 - **WebSocket Communication**: Komunikasi real-time dengan latency rendah
@@ -16,7 +11,7 @@
 - **Auto-retry Mechanism**: Handling error dengan auto-recovery
 - **Status Monitoring**: Real-time monitoring koneksi dan status sistem
 
-## 📁 Struktur Proyek
+## Struktur Proyek
 
 ```
 CamSight/
@@ -43,7 +38,7 @@ CamSight/
 └── README.md                 # Dokumentasi utama (file ini)
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 
@@ -61,7 +56,7 @@ CamSight/
 - **WebSocket API**: Browser native WebSocket
 - **MediaDevices API**: Camera access
 
-## ⚡ Quick Start
+## Quick Start
 
 ### 1. Setup Backend
 
@@ -101,7 +96,7 @@ Aplikasi akan berjalan di: `http://localhost:3000`
 4. Berikan izin akses kamera
 5. Hasil deteksi objek akan muncul di panel kanan
 
-## 🔧 Konfigurasi
+## Konfigurasi
 
 ### Backend Configuration
 
@@ -119,7 +114,7 @@ Pengaturan default:
 - Video resolution: 640x480 (ideal)
 - Auto-retry: 3 attempts dengan exponential backoff
 
-## 📋 API Endpoints
+## API Endpoints
 
 ### Backend Endpoints
 
@@ -138,7 +133,7 @@ Frontend berkomunikasi dengan backend melalui:
 2. **MJPEG Stream**: Menerima hasil deteksi teranotasi
 3. **HTTP Polling**: Monitoring status backend
 
-## 🎨 UI Components
+## UI Components
 
 ### CameraCapture
 
@@ -161,7 +156,7 @@ Frontend berkomunikasi dengan backend melalui:
 - Streaming status
 - Visual indicators dengan animasi
 
-## 🔄 Alur Sistem
+## Alur Sistem
 
 ```
 1. Frontend → getUserMedia() → Akses Kamera
@@ -173,7 +168,7 @@ Frontend berkomunikasi dengan backend melalui:
 7. Frontend → Display → Tampilkan Hasil Real-time
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Backend Issues
 
@@ -192,23 +187,23 @@ Frontend berkomunikasi dengan backend melalui:
 - **CORS Error**: Pastikan CORS middleware aktif di backend
 - **Performance issues**: Kurangi frame rate atau resolusi
 
-## 🔒 Security Notes
+## Security Notes
 
-⚠️ **Development Only**: Konfigurasi saat ini untuk development. Untuk production:
+**Development Only**: Konfigurasi saat ini untuk development. Untuk production:
 
 - Ubah CORS settings untuk domain spesifik
 - Gunakan HTTPS/WSS untuk production
 - Implement authentication jika diperlukan
 - Review security headers
 
-## 📈 Performance Tips
+## Performance Tips
 
 - **Optimal Frame Rate**: 10-15 FPS untuk balance antara real-time dan performance
 - **Resolution**: 640x480 optimal untuk YOLO nano
 - **Browser**: Chrome/Edge recommended untuk WebRTC performance
 - **Hardware**: GPU akan meningkatkan performa detection
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork repository
 2. Buat feature branch (`git checkout -b feature/AmazingFeature`)
@@ -216,17 +211,13 @@ Frontend berkomunikasi dengan backend melalui:
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open Pull Request
 
-## 📄 License
+## License
 
 Project ini menggunakan MIT License. Lihat file `LICENSE` untuk detail.
 
-## 🔗 Links
+## Links
 
 - [YOLO Documentation](https://docs.ultralytics.com/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com/)
-
----
-
-**Dibuat dengan ❤️ untuk real-time object detection**

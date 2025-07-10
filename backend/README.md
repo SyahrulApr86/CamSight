@@ -2,7 +2,7 @@
 
 Backend FastAPI untuk sistem object tracking real-time menggunakan YOLO 12 nano.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Install Dependencies
 
@@ -22,7 +22,7 @@ Atau:
 python main.py
 ```
 
-## 📋 Endpoints
+## Endpoints
 
 ### WebSocket
 
@@ -34,13 +34,13 @@ python main.py
 - **`/status`** - Status sistem dan model
 - **`/video_feed`** - MJPEG stream hasil deteksi objek
 
-## 🧠 Model
+## Model
 
 Backend menggunakan model YOLO 12 nano (`yolo12n.pt`) untuk object detection. Model akan didownload otomatis saat pertama kali dijalankan.
 
 Jika YOLO 12 nano tidak tersedia, akan menggunakan YOLOv8n sebagai fallback.
 
-## 🔧 Technical Details
+## Technical Details
 
 - **Framework**: FastAPI
 - **WebSocket**: Untuk real-time communication
@@ -48,6 +48,6 @@ Jika YOLO 12 nano tidak tersedia, akan menggunakan YOLOv8n sebagai fallback.
 - **Image Processing**: OpenCV
 - **MJPEG Streaming**: Untuk mengirim hasil ke frontend
 
-## 🌐 CORS
+## CORS
 
 Backend dikonfigurasi untuk menerima request dari semua origin untuk keperluan development.

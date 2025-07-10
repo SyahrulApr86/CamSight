@@ -2,7 +2,7 @@
 
 Frontend Next.js untuk sistem object tracking real-time CamSight.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Install Dependencies
 
@@ -18,7 +18,7 @@ npm run dev
 
 Aplikasi akan berjalan di: http://localhost:3000
 
-## 🔧 Tech Stack
+## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS
@@ -27,7 +27,7 @@ Aplikasi akan berjalan di: http://localhost:3000
 - **WebSocket**: Native WebSocket API
 - **Camera**: MediaDevices API
 
-## 📱 Features
+## Features
 
 ### Real-time Camera Capture
 
@@ -58,7 +58,7 @@ Aplikasi akan berjalan di: http://localhost:3000
 - Smooth animations dan transitions
 - Status indicators dengan animasi
 
-## 🔌 API Integration
+## API Integration
 
 Frontend berkomunikasi dengan backend melalui:
 
@@ -76,7 +76,7 @@ Frontend berkomunikasi dengan backend melalui:
    - Monitoring status backend
    - Auto-polling setiap 5 detik
 
-## 📋 Components
+## Components
 
 ### `CameraCapture`
 
@@ -96,7 +96,7 @@ Frontend berkomunikasi dengan backend melalui:
 - Visual indicators dengan animasi
 - Warning dan tips untuk user
 
-## 🎨 Styling
+## Styling
 
 Menggunakan Tailwind CSS dengan:
 
@@ -106,7 +106,7 @@ Menggunakan Tailwind CSS dengan:
 - Responsive design utilities
 - Component classes untuk reusability
 
-## 🔄 State Management
+## State Management
 
 Menggunakan React hooks untuk:
 
@@ -116,7 +116,7 @@ Menggunakan React hooks untuk:
 - Backend health monitoring
 - UI states (loading, error, success)
 
-## 🌐 Browser Compatibility
+## Browser Compatibility
 
 Minimum requirements:
 

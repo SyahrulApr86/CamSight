@@ -6,11 +6,11 @@ Menjalankan server FastAPI untuk sistem object tracking real-time
 import uvicorn
 
 if __name__ == "__main__":
-    print("🚀 Memulai CamSight Backend...")
-    print("📍 Server akan berjalan di: http://localhost:8000")
-    print("🔌 WebSocket endpoint: ws://localhost:8000/ws")
-    print("📹 Video stream: http://localhost:8000/video_feed")
-    print("\n⚡ Tekan Ctrl+C untuk menghentikan server\n")
+    print("Memulai CamSight Backend...")
+    print("Server akan berjalan di: http://localhost:8000")
+    print("WebSocket endpoint: ws://localhost:8000/ws")
+    print("Video stream: http://localhost:8000/video_feed")
+    print("\nTekan Ctrl+C untuk menghentikan server\n")
     
     uvicorn.run(
         "main:app",
