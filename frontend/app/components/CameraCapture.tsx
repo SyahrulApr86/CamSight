@@ -28,9 +28,17 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure client-side only rendering
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Get available camera devices
   useEffect(() => {
+    if (!isClient) return;
+
     const getDevices = async () => {
       try {
         const deviceList = await navigator.mediaDevices.enumerateDevices();
@@ -47,7 +55,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
     };
 
     getDevices();
-  }, [selectedDeviceId]);
+  }, [selectedDeviceId, isClient]);
 
   // Start camera access
   const startCamera = async () => {
@@ -243,9 +251,6 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
   useEffect(() => {
     return () => {
       stopCamera();
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
     };
   }, []);
 
@@ -318,6 +323,38 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
       </div>
     </div>
   );
+
+  // Don't render anything until client-side
+  if (!isClient) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+          <span className="text-sm font-medium text-gray-700">Loading...</span>
+        </div>
+        <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="w-full h-64 md:h-80 bg-gray-800 flex items-center justify-center">
+            <div className="text-white text-center">
+              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <p className="text-lg font-medium">Loading Camera Interface...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -454,7 +491,9 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
         {!isStreaming ? (
           <button
             onClick={
-              cameraStatus === "granted" ? onStartStreaming : startCamera
+              cameraStatus === "granted"
+                ? onStartStreaming
+                : handleStartStreaming
             }
             disabled={
               cameraStatus === "requesting" ||
@@ -489,7 +528,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({
           </button>
         ) : (
           <button
-            onClick={onStopStreaming}
+            onClick={handleStopStreaming}
             className="btn-secondary-enhanced flex-1"
           >
             <div className="flex items-center justify-center gap-3">
