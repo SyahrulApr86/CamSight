@@ -44,19 +44,19 @@ export default function StatusIndicator({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "online":
-        return "text-green-600";
+        return "text-green-800";
       case "offline":
-        return "text-red-600";
+        return "text-red-800";
       case "checking":
-        return "text-yellow-600";
+        return "text-yellow-800";
       default:
-        return "text-gray-600";
+        return "text-gray-800";
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto mb-6">
-      <div className="glass p-4 rounded-xl">
+      <div className="bg-white/85 backdrop-blur-lg rounded-xl shadow-lg border border-white/40 p-4">
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
           {/* Backend Status */}
           <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export default function StatusIndicator({
             )}
             <span
               className={`font-medium ${
-                isConnected ? "text-blue-600" : "text-gray-600"
+                isConnected ? "text-blue-800" : "text-gray-800"
               }`}
             >
               {isConnected ? "WebSocket Connected" : "WebSocket Disconnected"}
@@ -91,7 +91,7 @@ export default function StatusIndicator({
             )}
             <span
               className={`font-medium ${
-                isStreaming ? "text-purple-600" : "text-gray-600"
+                isStreaming ? "text-purple-800" : "text-gray-800"
               }`}
             >
               {isStreaming ? "Streaming Active" : "Streaming Inactive"}

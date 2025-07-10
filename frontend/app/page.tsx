@@ -109,10 +109,12 @@ export default function Home() {
             CamSight
           </h1>
         </div>
-        <p className="text-lg md:text-xl text-gray-800 max-w-2xl mx-auto font-medium">
-          Real-time object tracking system using YOLO 12 nano for live object
-          detection from your camera.
-        </p>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl px-6 py-4 max-w-2xl mx-auto border border-white/30 shadow-lg">
+          <p className="text-lg md:text-xl text-gray-900 font-medium leading-relaxed">
+            Real-time object tracking system using YOLO 12 nano for live object
+            detection from your camera.
+          </p>
+        </div>
       </header>
 
       {/* Status Indicators */}
