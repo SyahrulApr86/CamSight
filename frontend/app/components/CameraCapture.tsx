@@ -97,16 +97,16 @@ export default function CameraCapture({
       if (!videoRef.current) {
         console.error("Video reference is null");
         console.log("Attempting to wait for video element...");
-        
+
         // Wait a bit for the video element to be available
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         if (!videoRef.current) {
           console.error("Video element still not available after waiting");
           throw new Error("Video element not found");
         }
       }
-      
+
       console.log("Video element found:", videoRef.current);
 
       console.log("Setting video source...");
@@ -289,7 +289,7 @@ export default function CameraCapture({
           <select
             value={selectedDevice}
             onChange={(e) => setSelectedDevice(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full p-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             {devices.map((device) => (
               <option key={device.deviceId} value={device.deviceId}>
