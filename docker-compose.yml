@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: camsight-backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
     restart: unless-stopped
     networks:
       - camsight-network
@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     container_name: camsight-frontend
     ports:
-      - "3000:3000"
+      - "3006:3000"
     environment:
       - BACKEND_HOST=backend
     depends_on:
