@@ -13,11 +13,15 @@ export default function Home() {
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
   const [connectionStatus, setConnectionStatus] = useState("Disconnected");
 
-  // Check backend status
+  // Check backend status with optimized interval
   useEffect(() => {
     const checkBackendStatus = async () => {
       try {
-        const response = await fetch("http://localhost:8000/status");
+        const response = await fetch("http://localhost:8000/status", {
+          method: "GET",
+          cache: "no-cache",
+          signal: AbortSignal.timeout(2000), // 2 second timeout
+        });
         if (response.ok) {
           setBackendStatus("online");
         } else {
@@ -29,30 +33,50 @@ export default function Home() {
     };
 
     checkBackendStatus();
-    const interval = setInterval(checkBackendStatus, 5000); // Check every 5 seconds
+    // Reduced check interval for better responsiveness
+    const interval = setInterval(checkBackendStatus, 3000); // Check every 3 seconds
 
     return () => clearInterval(interval);
   }, []);
 
-  // Initialize WebSocket connection
+  // Pre-initialize WebSocket connection when backend is online
+  useEffect(() => {
+    if (backendStatus === "online" && !wsConnection) {
+      connectWebSocket();
+    } else if (backendStatus === "offline" && wsConnection) {
+      wsConnection.close();
+      setWsConnection(null);
+    }
+  }, [backendStatus, wsConnection]);
+
+  // Initialize WebSocket connection with retry logic
   const connectWebSocket = () => {
     if (wsConnection?.readyState === WebSocket.OPEN) {
       return;
     }
 
     try {
+      setConnectionStatus("Connecting");
       const ws = new WebSocket("ws://localhost:8000/ws");
       setWsConnection(ws);
 
       ws.onopen = () => {
         setConnectionStatus("Connected");
-        console.log("WebSocket connected");
+        console.log("WebSocket connected successfully");
       };
 
-      ws.onclose = () => {
+      ws.onclose = (event) => {
         setConnectionStatus("Disconnected");
         setIsStreaming(false);
-        console.log("WebSocket disconnected");
+        console.log("WebSocket disconnected", event.code, event.reason);
+
+        // Auto-reconnect if backend is still online
+        if (backendStatus === "online" && !event.wasClean) {
+          setTimeout(() => {
+            console.log("Attempting WebSocket reconnection...");
+            connectWebSocket();
+          }, 2000);
+        }
       };
 
       ws.onerror = (error) => {
@@ -60,30 +84,54 @@ export default function Home() {
         setConnectionStatus("Disconnected");
         setIsStreaming(false);
       };
+
+      // Set connection timeout
+      setTimeout(() => {
+        if (ws.readyState === WebSocket.CONNECTING) {
+          ws.close();
+          setConnectionStatus("Disconnected");
+          console.error("WebSocket connection timeout");
+        }
+      }, 5000);
     } catch (error) {
       console.error("Failed to connect WebSocket:", error);
+      setConnectionStatus("Disconnected");
     }
   };
 
-  // Send frame to backend
+  // Optimized frame sending with error handling
   const sendFrame = (frameData: string) => {
     if (wsConnection?.readyState === WebSocket.OPEN) {
-      wsConnection.send(frameData);
+      try {
+        wsConnection.send(frameData);
+      } catch (error) {
+        console.error("Failed to send frame:", error);
+        setConnectionStatus("Disconnected");
+      }
+    } else if (wsConnection?.readyState === WebSocket.CONNECTING) {
+      console.warn("WebSocket still connecting, frame dropped");
     }
   };
 
   const handleStartStreaming = () => {
     if (backendStatus === "online") {
-      connectWebSocket();
-      setIsStreaming(true);
+      if (wsConnection?.readyState === WebSocket.OPEN) {
+        setIsStreaming(true);
+      } else {
+        // If WebSocket is not ready, connect first then start streaming
+        setConnectionStatus("Connecting");
+        connectWebSocket();
+        // Wait a bit for connection to establish
+        setTimeout(() => {
+          setIsStreaming(true);
+        }, 1000);
+      }
     }
   };
 
   const handleStopStreaming = () => {
     setIsStreaming(false);
-    if (wsConnection) {
-      wsConnection.close();
-    }
+    // Keep WebSocket connection alive for faster restart
   };
 
   return (
