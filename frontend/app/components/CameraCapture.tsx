@@ -55,6 +55,8 @@ export default function CameraCapture({
     setCameraStatus("requesting");
     setErrorMessage("");
 
+    let timeoutId: NodeJS.Timeout | null = null;
+
     try {
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -72,28 +74,86 @@ export default function CameraCapture({
 
       console.log("Requesting camera access with constraints:", constraints);
 
-      // Add timeout to prevent infinite loading
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Camera access timeout")), 10000)
-      );
+      // Set a timeout for the entire operation
+      timeoutId = setTimeout(() => {
+        console.error("Camera access operation timed out");
+        setCameraStatus("denied");
+        setErrorMessage("Camera access timed out. Please try again.");
+      }, 15000); // 15 second timeout
 
-      const streamPromise = navigator.mediaDevices.getUserMedia(constraints);
-      const stream = (await Promise.race([
-        streamPromise,
-        timeoutPromise,
-      ])) as MediaStream;
+      console.log("Calling getUserMedia...");
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      console.log("Camera stream received:", stream);
+      console.log("Stream active:", stream.active);
+      console.log("Stream tracks:", stream.getTracks());
+
+      if (!stream || !stream.active || stream.getTracks().length === 0) {
+        throw new Error("Invalid or inactive camera stream received");
+      }
 
       streamRef.current = stream;
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-        setCameraStatus("granted");
-        console.log("Camera access granted successfully");
-        return true;
+      if (!videoRef.current) {
+        console.error("Video reference is null");
+        throw new Error("Video element not found");
       }
+
+      console.log("Setting video source...");
+      videoRef.current.srcObject = stream;
+
+      // Wait for video to be ready
+      console.log("Waiting for video to load...");
+      await new Promise<void>((resolve, reject) => {
+        const video = videoRef.current!;
+
+        const onLoadedMetadata = () => {
+          console.log("Video metadata loaded");
+          video.removeEventListener("loadedmetadata", onLoadedMetadata);
+          video.removeEventListener("error", onError);
+          resolve();
+        };
+
+        const onError = (error: Event) => {
+          console.error("Video error:", error);
+          video.removeEventListener("loadedmetadata", onLoadedMetadata);
+          video.removeEventListener("error", onError);
+          reject(new Error("Video failed to load"));
+        };
+
+        video.addEventListener("loadedmetadata", onLoadedMetadata);
+        video.addEventListener("error", onError);
+
+        // If metadata is already loaded
+        if (video.readyState >= 1) {
+          onLoadedMetadata();
+        }
+      });
+
+      console.log("Playing video...");
+      try {
+        await videoRef.current.play();
+      } catch (playError) {
+        console.warn("Video play failed, trying without await:", playError);
+        videoRef.current.play(); // Try without await
+      }
+
+      console.log("Video is playing, setting status to granted");
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+
+      setCameraStatus("granted");
+      console.log("Camera access granted successfully");
+      return true;
     } catch (error: any) {
       console.error("Error accessing camera:", error);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
       setCameraStatus("denied");
 
       // Set specific error messages
@@ -117,7 +177,6 @@ export default function CameraCapture({
 
       throw error;
     }
-    return false;
   };
 
   // Stop camera
