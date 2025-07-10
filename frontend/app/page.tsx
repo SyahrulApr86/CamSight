@@ -109,7 +109,7 @@ export default function Home() {
             CamSight
           </h1>
         </div>
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-gray-800 max-w-2xl mx-auto font-medium">
           Real-time object tracking system using YOLO 12 nano for live object
           detection from your camera.
         </p>
@@ -196,7 +196,7 @@ export default function Home() {
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div className="glass p-6 rounded-2xl">
+          <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
                 <svg
@@ -213,15 +213,15 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold">Real-time</h3>
+              <h3 className="text-lg font-semibold text-gray-800">Real-time</h3>
             </div>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Live object detection with low latency using WebSocket
               communication.
             </p>
           </div>
 
-          <div className="glass p-6 rounded-2xl">
+          <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center">
                 <svg
@@ -238,14 +238,16 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold">YOLO 12 Nano</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                YOLO 12 Nano
+              </h3>
             </div>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Using the latest YOLO model for high accuracy object detection.
             </p>
           </div>
 
-          <div className="glass p-6 rounded-2xl">
+          <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
                 <svg
@@ -262,9 +264,11 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold">User-Friendly</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                User-Friendly
+              </h3>
             </div>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Easy-to-use interface with modern and responsive design.
             </p>
           </div>
