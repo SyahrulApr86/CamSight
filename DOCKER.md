@@ -159,6 +159,18 @@ services:
 
 **Note**: Camera access biasanya tidak berfungsi dalam Docker container. Aplikasi ini dirancang untuk diakses dari browser host yang memiliki akses langsung ke kamera.
 
+### 4. Husky Error dalam Docker Build
+
+Jika terjadi error seperti "sh: husky: not found" saat build:
+
+```bash
+# Error yang mungkin muncul:
+# > [frontend deps 5/5] RUN npm ci --only=production:
+# sh: husky: not found
+```
+
+**Solusi sudah implemented**: Dockerfile otomatis menghapus prepare script sebelum install production dependencies untuk mencegah masalah ini.
+
 ## Development vs Production
 
 ### Development
@@ -191,7 +203,7 @@ Otomatis akan menjalankan sebelum setiap commit:
 - TypeScript compilation check (`tsc -b`)
 - ESLint dengan auto-fix (`eslint . --fix`)
 
-**Note**: Husky hanya untuk development dan sudah dikecualikan dari Docker builds via `.dockerignore`
+**Note**: Husky hanya untuk development dan sudah dikecualikan dari Docker builds via `.dockerignore`. Dockerfile juga otomatis menghapus prepare script untuk mencegah Husky errors di production build.
 
 ### Production
 
