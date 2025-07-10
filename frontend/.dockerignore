@@ -48,4 +48,6 @@ coverage/
 README.md
 
 # Git hooks (development only)
-.husky/ 
+.husky/
+# Keep public directory for static assets
+!public/ 
