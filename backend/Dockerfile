@@ -4,17 +4,11 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies yang diperlukan untuk OpenCV dan YOLO
+# Install minimal system dependencies yang diperlukan untuk OpenCV dan YOLO
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
+    libgl1-mesa-glx \
     libgcc-s1 \
-    ffmpeg \
-    libsm6 \
-    libxext6 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
