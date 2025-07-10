@@ -27,7 +27,9 @@ export default function CameraCapture({
   >("idle");
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string>("");
-  const [frameCount, setFrameCount] = useState(0);
+  const [fps, setFps] = useState(0);
+  const lastFrameTimeRef = useRef<number>(0);
+  const fpsHistoryRef = useRef<number[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Get available camera devices
@@ -224,9 +226,28 @@ export default function CameraCapture({
     // Convert to base64 JPEG
     const frameData = canvas.toDataURL("image/jpeg", 0.8);
 
+    // Calculate FPS
+    const currentTime = performance.now();
+    if (lastFrameTimeRef.current > 0) {
+      const interval = currentTime - lastFrameTimeRef.current;
+      const currentFps = 1000 / interval; // Convert ms to FPS
+
+      // Add to history for smoothing (keep last 10 values)
+      fpsHistoryRef.current.push(currentFps);
+      if (fpsHistoryRef.current.length > 10) {
+        fpsHistoryRef.current.shift();
+      }
+
+      // Calculate average FPS for smoother display
+      const avgFps =
+        fpsHistoryRef.current.reduce((sum, fps) => sum + fps, 0) /
+        fpsHistoryRef.current.length;
+      setFps(Math.round(avgFps * 10) / 10); // Round to 1 decimal place
+    }
+    lastFrameTimeRef.current = currentTime;
+
     // Send frame to backend
     onFrame(frameData);
-    setFrameCount((prev) => prev + 1);
   }, [isStreaming, onFrame]);
 
   // Start/stop frame capture interval
@@ -258,6 +279,11 @@ export default function CameraCapture({
   }, []);
 
   const handleStartStreaming = async () => {
+    // Reset FPS tracking when starting
+    setFps(0);
+    lastFrameTimeRef.current = 0;
+    fpsHistoryRef.current = [];
+
     if (cameraStatus === "granted") {
       onStartStreaming();
     } else {
@@ -276,7 +302,10 @@ export default function CameraCapture({
   const handleStopStreaming = () => {
     onStopStreaming();
     stopCamera();
-    setFrameCount(0);
+    // Reset FPS tracking
+    setFps(0);
+    lastFrameTimeRef.current = 0;
+    fpsHistoryRef.current = [];
   };
 
   return (
@@ -380,10 +409,10 @@ export default function CameraCapture({
           </div>
         )}
 
-        {/* Frame counter */}
+        {/* FPS counter */}
         {isStreaming && (
-          <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-            Frames: {frameCount}
+          <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-mono">
+            FPS: {fps}
           </div>
         )}
       </div>
