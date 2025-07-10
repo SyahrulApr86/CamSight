@@ -168,6 +168,30 @@ File saat ini dikonfigurasi untuk development dengan:
 - Hot reload enabled
 - Debug mode active
 - Port exposure untuk development
+- **Git hooks (Husky) untuk quality control - TIDAK termasuk dalam Docker build**
+
+#### Setup Development Environment
+
+```bash
+# 1. Install frontend dependencies (termasuk Husky)
+cd frontend
+npm install
+
+# 2. Setup Git hooks (Windows)
+.\setup-hooks.ps1
+
+# 3. Setup Git hooks (Linux/Mac)
+./setup-hooks.sh
+```
+
+#### Pre-commit Hooks
+
+Otomatis akan menjalankan sebelum setiap commit:
+
+- TypeScript compilation check (`tsc -b`)
+- ESLint dengan auto-fix (`eslint . --fix`)
+
+**Note**: Husky hanya untuk development dan sudah dikecualikan dari Docker builds via `.dockerignore`
 
 ### Production
 

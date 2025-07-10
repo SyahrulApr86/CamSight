@@ -23,7 +23,7 @@ export default function Home() {
         } else {
           setBackendStatus("offline");
         }
-      } catch (error) {
+      } catch {
         setBackendStatus("offline");
       }
     };
@@ -59,8 +59,8 @@ export default function Home() {
         setIsConnected(false);
         setIsStreaming(false);
       };
-    } catch (error) {
-      console.error("Failed to connect WebSocket:", error);
+    } catch (err) {
+      console.error("Failed to connect WebSocket:", err);
     }
   };
 

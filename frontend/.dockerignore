@@ -45,4 +45,7 @@ coverage/
 *.tar.gz
 
 # Documentation
-README.md 
+README.md
+
+# Git hooks (development only)
+.husky/ 

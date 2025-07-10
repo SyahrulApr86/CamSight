@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 interface CameraCaptureProps {
   onFrame: (frameData: string) => void;
@@ -157,7 +157,7 @@ export default function CameraCapture({
       setCameraStatus("granted");
       console.log("Camera access granted successfully");
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error accessing camera:", error);
 
       if (timeoutId) {
@@ -167,21 +167,22 @@ export default function CameraCapture({
       setCameraStatus("denied");
 
       // Set specific error messages
-      if (error.name === "NotAllowedError") {
+      const err = error as Error;
+      if (err.name === "NotAllowedError") {
         setErrorMessage(
           "Camera permission denied. Please allow camera access and try again."
         );
-      } else if (error.name === "NotFoundError") {
+      } else if (err.name === "NotFoundError") {
         setErrorMessage(
           "No camera found. Please connect a camera and try again."
         );
-      } else if (error.name === "NotReadableError") {
+      } else if (err.name === "NotReadableError") {
         setErrorMessage("Camera is already in use by another application.");
-      } else if (error.message === "Camera access timeout") {
+      } else if (err.message === "Camera access timeout") {
         setErrorMessage("Camera access timed out. Please try again.");
       } else {
         setErrorMessage(
-          `Camera error: ${error.message || "Unknown error occurred"}`
+          `Camera error: ${err.message || "Unknown error occurred"}`
         );
       }
 
@@ -204,7 +205,7 @@ export default function CameraCapture({
   };
 
   // Capture and send frame
-  const captureFrame = () => {
+  const captureFrame = useCallback(() => {
     if (!videoRef.current || !canvasRef.current || !isStreaming) return;
 
     const video = videoRef.current;
@@ -226,7 +227,7 @@ export default function CameraCapture({
     // Send frame to backend
     onFrame(frameData);
     setFrameCount((prev) => prev + 1);
-  };
+  }, [isStreaming, onFrame]);
 
   // Start/stop frame capture interval
   useEffect(() => {
@@ -244,7 +245,7 @@ export default function CameraCapture({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isStreaming, cameraStatus]);
+  }, [isStreaming, cameraStatus, captureFrame]);
 
   // Cleanup on unmount
   useEffect(() => {

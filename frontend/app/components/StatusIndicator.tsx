@@ -142,8 +142,8 @@ export default function StatusIndicator({
                 />
               </svg>
               <span className="text-blue-700 text-sm font-medium">
-                Click "Start Streaming" to begin real-time object detection from
-                your camera.
+                Click &ldquo;Start Streaming&rdquo; to begin real-time object
+                detection from your camera.
               </span>
             </div>
           </div>

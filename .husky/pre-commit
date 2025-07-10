@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+# Frontend and Backend pre-commit hooks
+set -e  # Exit immediately if a command exits with non-zero status
+
+echo "Running pre-commit checks..."
+
+# Frontend checks
+echo "Checking Frontend (Next.js)..."
+cd frontend
+echo "   - TypeScript compilation check..."
+npm run type-check:build || { echo "Frontend TypeScript compilation failed!"; exit 1; }
+echo "   - ESLint fix..."
+npm run lint:fix || { echo "Frontend ESLint failed!"; exit 1; }
+
+echo "All pre-commit checks passed!" 

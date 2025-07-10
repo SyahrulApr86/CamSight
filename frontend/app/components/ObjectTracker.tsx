@@ -112,7 +112,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
                   <p className="text-gray-600 text-sm mb-4">
                     {retryCount < 3
                       ? `Retrying... (${retryCount + 1}/3)`
-                      : "Max retry attempts reached"}
+                      : `Max retry attempts reached`}
                   </p>
                   <button onClick={handleRetry} className="btn-primary text-sm">
                     Try Again

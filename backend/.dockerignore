@@ -48,4 +48,7 @@ Dockerfile
 *.log
 
 # Documentation
-README.md 
+README.md
+
+# Git hooks (development only)
+.husky/ 
