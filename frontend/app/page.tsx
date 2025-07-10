@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import CameraCapture from "./components/CameraCapture";
 import ObjectTracker from "./components/ObjectTracker";
 import StatusIndicator from "./components/StatusIndicator";
+import DetectedObjectsInfo from "./components/DetectedObjectsInfo";
 
 export default function Home() {
   const [isConnected, setIsConnected] = useState(false);
@@ -194,6 +195,11 @@ export default function Home() {
               <ObjectTracker isStreaming={isStreaming} />
             </div>
           </div>
+        </div>
+
+        {/* Detected Objects Information */}
+        <div className="mt-8">
+          <DetectedObjectsInfo isStreaming={isStreaming} />
         </div>
 
         {/* Info Cards */}
