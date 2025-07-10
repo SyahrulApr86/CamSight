@@ -331,7 +331,7 @@ export default function CameraCapture({
       )}
 
       {/* Video Preview */}
-      <div className="relative min-h-64 max-h-96 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
         {/* Video element - always rendered but hidden when not granted */}
         <video
           ref={videoRef}

@@ -60,7 +60,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
   return (
     <div className="space-y-4">
       {/* Detection Results Display */}
-      <div className="relative min-h-64 max-h-96 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
         {isStreaming ? (
           <>
             <img
