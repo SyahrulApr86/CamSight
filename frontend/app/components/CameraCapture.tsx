@@ -331,14 +331,14 @@ export default function CameraCapture({
       )}
 
       {/* Video Preview */}
-      <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative h-80 md:h-96 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
         {/* Video element - always rendered but hidden when not granted */}
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className={`w-full h-full object-cover ${
+          className={`w-full h-full object-contain ${
             cameraStatus === "granted" ? "block" : "hidden"
           }`}
         />
