@@ -3,9 +3,7 @@ FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-# Remove prepare script to avoid husky issues in production
 RUN npm pkg delete scripts.prepare
 RUN npm ci --only=production
 
@@ -13,16 +11,15 @@ RUN npm ci --only=production
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Install ALL dependencies (including dev dependencies) for build
+# Inject build-time environment variable
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+
 COPY package.json package-lock.json* ./
 RUN npm ci
-
 COPY . .
 
-# Ensure public directory exists (even if empty)
 RUN mkdir -p public
-
-# Build the application
 RUN npm run build
 
 # Stage 3: Runner
@@ -36,20 +33,15 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
+RUN mkdir .next && chown nextjs:nodejs .next
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
 EXPOSE 3000
-
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"] 
+CMD ["node", "server.js"]
