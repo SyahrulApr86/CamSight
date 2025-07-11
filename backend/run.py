@@ -7,9 +7,9 @@ import uvicorn
 
 if __name__ == "__main__":
     print("Starting CamSight Backend...")
-    print("Server will run at: http://localhost:8000")
-    print("WebSocket endpoint: ws://localhost:8000/ws")
-    print("Video stream: http://localhost:8000/video_feed")
+    print("Server will run at: http://0.0.0.0:8000")
+    print("WebSocket endpoint: ws://0.0.0.0:8000/ws")
+    print("Video stream: http://0.0.0.0:8000/video_feed")
     print("\nPress Ctrl+C to stop server\n")
     
     uvicorn.run(

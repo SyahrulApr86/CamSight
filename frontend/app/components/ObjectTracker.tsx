@@ -55,7 +55,15 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
     }
   };
 
-  const videoFeedUrl = `http://localhost:8000/video_feed?t=${Date.now()}`;
+  // Get backend URL from environment variable
+  const getBackendUrl = () => {
+    if (typeof window !== "undefined") {
+      return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    }
+    return "http://localhost:8000";
+  };
+
+  const videoFeedUrl = `${getBackendUrl()}/video_feed?t=${Date.now()}`;
 
   return (
     <div className="space-y-4">
@@ -63,6 +71,7 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
       <div className="relative w-full bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
         {isStreaming ? (
           <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               ref={imgRef}
               src={videoFeedUrl}

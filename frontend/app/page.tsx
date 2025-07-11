@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CameraCapture from "./components/CameraCapture";
 import ObjectTracker from "./components/ObjectTracker";
 import StatusIndicator from "./components/StatusIndicator";
@@ -14,11 +14,20 @@ export default function Home() {
   >("checking");
   const wsRef = useRef<WebSocket | null>(null);
 
+  // Get backend URL from environment variable
+  const getBackendUrl = () => {
+    if (typeof window !== "undefined") {
+      return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    }
+    return "http://localhost:8000";
+  };
+
   // Check backend status
   useEffect(() => {
     const checkBackendStatus = async () => {
       try {
-        const response = await fetch("http://localhost:8000/status");
+        const backendUrl = getBackendUrl();
+        const response = await fetch(`${backendUrl}/status`);
         if (response.ok) {
           setBackendStatus("online");
         } else {
@@ -41,8 +50,13 @@ export default function Home() {
       return;
     }
 
+    const backendUrl = getBackendUrl();
+    const wsUrl = backendUrl
+      .replace("http://", "ws://")
+      .replace("https://", "wss://");
+
     try {
-      wsRef.current = new WebSocket("ws://localhost:8000/ws");
+      wsRef.current = new WebSocket(`${wsUrl}/ws`);
 
       wsRef.current.onopen = () => {
         setIsConnected(true);

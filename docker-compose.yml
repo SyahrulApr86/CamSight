@@ -10,7 +10,7 @@ services:
     networks:
       - camsight-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -25,6 +25,7 @@ services:
       - "3006:3000"
     environment:
       - BACKEND_HOST=backend
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
     depends_on:
       - backend
     restart: unless-stopped

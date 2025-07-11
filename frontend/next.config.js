@@ -4,7 +4,14 @@ const nextConfig = {
   swcMinify: true,
   output: "standalone",
   images: {
-    domains: ["localhost"],
+    domains: [
+      "localhost",
+      process.env.BACKEND_HOST || "localhost",
+      // Add additional domains for production
+      "127.0.0.1",
+      "0.0.0.0",
+      "backend", // Docker service name
+    ].filter(Boolean),
   },
   async rewrites() {
     return [
