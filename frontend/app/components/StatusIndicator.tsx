@@ -117,8 +117,7 @@ export default function StatusIndicator({
                 />
               </svg>
               <span className="text-red-700 text-sm font-medium">
-                Backend cannot be reached. Ensure backend server is running at
-                http://localhost:8000
+                Backend cannot be reached. Please contact the administrator.
               </span>
             </div>
           </div>

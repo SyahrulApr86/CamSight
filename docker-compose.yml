@@ -5,12 +5,12 @@ services:
       dockerfile: Dockerfile
     container_name: camsight-backend
     ports:
-      - "8001:8000"
+      - "${EXPOSED_BACKEND_PORT}:${BACKEND_PORT}"
     restart: unless-stopped
     networks:
       - camsight-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/status"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:${BACKEND_PORT}/status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -21,13 +21,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_BACKEND_URL: http://backend:8000
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
     container_name: camsight-frontend
     ports:
-      - "3006:3000"
+      - "${EXPOSED_FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
-      - BACKEND_HOST=backend
-      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
+      - BACKEND_HOST=${BACKEND_HOST}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
     depends_on:
       - backend
     restart: unless-stopped
