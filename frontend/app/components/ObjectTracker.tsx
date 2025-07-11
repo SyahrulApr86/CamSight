@@ -57,13 +57,18 @@ export default function ObjectTracker({ isStreaming }: ObjectTrackerProps) {
 
   // Get backend URL from environment variable
   const getBackendUrl = () => {
+    // In production with nginx reverse proxy, use relative paths
     if (typeof window !== "undefined") {
-      return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+      return process.env.NEXT_PUBLIC_BACKEND_URL || "";
     }
-    return "http://localhost:8000";
+    return "";
   };
 
-  const videoFeedUrl = `${getBackendUrl()}/video_feed?t=${Date.now()}`;
+  const videoFeedUrl = (() => {
+    const backendUrl = getBackendUrl();
+    const url = backendUrl ? `${backendUrl}/video_feed` : "/video_feed";
+    return `${url}?t=${Date.now()}`;
+  })();
 
   return (
     <div className="space-y-4">

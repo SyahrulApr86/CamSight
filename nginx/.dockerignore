@@ -1,0 +1,4 @@
+# Ignore unnecessary files for nginx
+README.md
+.git
+.gitignore 

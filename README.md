@@ -19,6 +19,7 @@ CamSight/
 │   ├── main.py                # Main server with WebSocket & MJPEG
 │   ├── run.py                 # Server runner script
 │   ├── requirements.txt       # Python dependencies
+│   ├── Dockerfile             # Backend Docker image
 │   └── README.md             # Backend documentation
 │
 ├── frontend/                   # Next.js Frontend
@@ -33,10 +34,41 @@ CamSight/
 │   ├── package.json          # Node.js dependencies
 │   ├── tailwind.config.js    # Tailwind configuration
 │   ├── tsconfig.json         # TypeScript configuration
+│   ├── Dockerfile             # Frontend Docker image
 │   └── README.md            # Frontend documentation
 │
+├── nginx/                      # Nginx Reverse Proxy
+│   └── nginx.conf             # Nginx configuration
+│
+├── docker-compose.yml         # Docker Compose configuration
+├── .env.example              # Environment variables template
 └── README.md                 # Main documentation (this file)
 ```
+
+## Docker Architecture
+
+The system uses Docker Compose with nginx as a reverse proxy for optimal performance and security:
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    Nginx (Port 80)                   │
+│                 Reverse Proxy                       │
+├─────────────────────────────────────────────────────┤
+│  Frontend (Next.js)    │    Backend (FastAPI)       │
+│  Container: 3000       │    Container: 8000          │
+│  Routes: /             │    Routes: /api, /ws,       │
+│                        │           /video_feed       │
+└─────────────────────────────────────────────────────┘
+```
+
+### Service Communication
+
+- **Frontend → Backend**: Internal Docker network (low latency)
+- **Client → Nginx**: External port 80
+- **Nginx → Backend**: `/api` routes proxied to backend
+- **Nginx → Frontend**: `/` routes proxied to frontend
+- **WebSocket**: `/ws` directly proxied to backend
+- **Video Stream**: `/video_feed` directly proxied to backend
 
 ## Tech Stack
 
@@ -58,7 +90,24 @@ CamSight/
 
 ## Quick Start
 
-### 1. Setup Backend
+### Option 1: Docker Deployment (Recommended)
+
+```bash
+# Copy environment variables
+cp .env.example .env
+
+# Build and run with Docker Compose
+docker-compose up --build
+
+# Or run in detached mode
+docker-compose up -d --build
+```
+
+Application will run at: `http://localhost:80`
+
+### Option 2: Manual Setup
+
+#### 1. Setup Backend
 
 ```bash
 # Navigate to backend directory
@@ -73,7 +122,7 @@ python run.py
 
 Server will run at: `http://localhost:8000`
 
-### 2. Setup Frontend
+#### 2. Setup Frontend
 
 ```bash
 # Navigate to frontend directory
@@ -88,9 +137,9 @@ npm run dev
 
 Application will run at: `http://localhost:3000`
 
-### 3. Access Application
+### Access Application
 
-1. Open browser and visit `http://localhost:3000`
+1. Open browser and visit `http://localhost:80` (Docker) or `http://localhost:3000` (Manual)
 2. Ensure backend is running (green status indicator)
 3. Click "Start Camera & Begin" to start streaming
 4. Grant camera permission
@@ -116,7 +165,18 @@ Default settings:
 
 ## API Endpoints
 
-### Backend Endpoints
+### Available Routes (Through Nginx)
+
+| Method    | Endpoint      | Target Service | Description                       |
+| --------- | ------------- | -------------- | --------------------------------- |
+| WebSocket | `/ws`         | Backend        | Receive frames from frontend      |
+| GET       | `/video_feed` | Backend        | MJPEG stream of detection results |
+| GET       | `/api/status` | Backend        | System and model status           |
+| GET       | `/api/*`      | Backend        | All other backend API routes      |
+| GET       | `/`           | Frontend       | Next.js application               |
+| GET       | `/*`          | Frontend       | All other frontend routes         |
+
+### Backend Endpoints (Internal)
 
 | Method    | Endpoint      | Description                       |
 | --------- | ------------- | --------------------------------- |
@@ -127,11 +187,11 @@ Default settings:
 
 ### Frontend Integration
 
-Frontend communicates with backend through:
+Frontend communicates with backend through nginx proxy:
 
-1. **WebSocket**: Send camera frames (base64 JPEG)
-2. **MJPEG Stream**: Receive annotated detection results
-3. **HTTP Polling**: Monitor backend status
+1. **WebSocket**: Send camera frames via `/ws` (base64 JPEG)
+2. **MJPEG Stream**: Receive annotated detection results via `/video_feed`
+3. **HTTP Polling**: Monitor backend status via `/api/status`
 
 ## UI Components
 

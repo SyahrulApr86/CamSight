@@ -16,10 +16,11 @@ export default function Home() {
 
   // Get backend URL from environment variable
   const getBackendUrl = () => {
+    // In production with nginx reverse proxy, use relative paths
     if (typeof window !== "undefined") {
-      return process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+      return process.env.NEXT_PUBLIC_BACKEND_URL || "";
     }
-    return "http://localhost:8000";
+    return "";
   };
 
   // Check backend status
@@ -27,7 +28,8 @@ export default function Home() {
     const checkBackendStatus = async () => {
       try {
         const backendUrl = getBackendUrl();
-        const response = await fetch(`${backendUrl}/status`);
+        const url = backendUrl ? `${backendUrl}/status` : "/api/status";
+        const response = await fetch(url);
         if (response.ok) {
           setBackendStatus("online");
         } else {
@@ -51,12 +53,22 @@ export default function Home() {
     }
 
     const backendUrl = getBackendUrl();
-    const wsUrl = backendUrl
-      .replace("http://", "ws://")
-      .replace("https://", "wss://");
+    let wsUrl: string;
+
+    if (backendUrl) {
+      // Development mode with full URL
+      wsUrl = backendUrl
+        .replace("http://", "ws://")
+        .replace("https://", "wss://");
+      wsUrl = `${wsUrl}/ws`;
+    } else {
+      // Production mode with nginx reverse proxy
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      wsUrl = `${protocol}//${window.location.host}/ws`;
+    }
 
     try {
-      wsRef.current = new WebSocket(`${wsUrl}/ws`);
+      wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
         setIsConnected(true);
